@@ -1,6 +1,8 @@
 #include "TBrowser.h"
 #include "TTab.h"
 #include "utils.h"
+#include "TLista.h"
+#include "TStiva.h"
 #define MAX_URL 50
 TBrowser *initBrowser()
 {
@@ -70,6 +72,25 @@ void printOpenedTabs(TBrowser *b)
 
 	}
 }
+void afisResourceQ(void *info)
+{
+	Resource *r = (Resource*)info;
+	printf("%s %lu/%lu\n",r->id,r->size - r->downloaded_size,r->size);
+}
+void freeResourceQ(void *info)
+{
+	Resource *r = (Resource*)info;
+	free(r);
+}
+int cmpResources(void *x,void *y)
+{
+	Resource *r1,*r2;
+	r1 = (Resource*)x;
+	r2 = (Resource*)y;
+	if(r1->downloaded_size - r1->downloaded_size >  r2->size - r2->downloaded_size)
+		return -1;
+	return 1;
+}
 
 void download(TBrowser *b,int index,TTab *t)
 {
@@ -84,19 +105,10 @@ void download(TBrowser *b,int index,TTab *t)
 		b->downloads = InitQ(sizeof(Resource));
 	if(!b->downloads)
 		return;
-	IntrQ((void*)&(b->downloads),r);
+	IntrQSorted((void*)&(b->downloads),r,cmpResources,freeResourceQ); //IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEl)
 }	
 
-void afisResourceQ(void *info)
-{
-	Resource *r = (Resource*)info;
-	printf("%s %lu/%lu\n",r->id,r->downloaded_size,r->size);
-}
-void freeResourceQ(void *info)
-{
-	Resource *r = (Resource*)info;
-	free(r);
-}
+
 
 void showDownloads(TBrowser *b)
 {
@@ -120,4 +132,49 @@ void delhistory(TBrowser *b,int nrEntries)
 	else
 		DistrQ((void*)&b->history,freeHistoryElem);
 
+}
+
+void wait(TBrowser *b,long bandwidth)
+{
+	AQ coada = b->downloads;
+	Resource *aux = calloc(1,sizeof(Resource));
+	if(!aux)
+		return;
+
+	while(!EMPTYQ(coada) && bandwidth)
+	{
+		ExtrQ((void*)&coada,aux,freeResourceQ);
+		if(aux->size > bandwidth && aux->downloaded_size + bandwidth <= aux->size) // adaug in lista de downloadaate daca size < bandwidth si scad size din bandwidth
+		{
+		 aux->downloaded_size += bandwidth;
+		 bandwidth = 0;
+		 IntrQSorted((void*)&coada,aux,cmpResources,freeResourceQ);
+		}
+		else if(bandwidth + aux->downloaded_size > aux->size)
+		{	
+			bandwidth  = bandwidth - aux->downloaded_size - aux->size;
+			aux->downloaded_size = aux->size;
+			if(b->downloaded == NULL)
+				b->downloaded = InitLista();
+			Inserare(&b->downloaded,aux);
+		}
+	}	
+
+}
+
+void deltab(TBrowser *b)
+{
+	//nu verificam daca nu ramane niciun tab deschis dupa ce l sterg pe ultimul deschis ca sa pun **
+	TLista p = b->tab,aux;
+	for(;p->urm->urm != NULL; p = p->urm);
+
+	aux = p->urm;
+	p->urm = NULL;
+	//eliberez tabul care este info celulei din lista
+	TTab *t = (TTab*)aux->info;
+	/*
+	DistrS(t->back,freePage);
+	DistrS(t->forward,freePage);
+	freePage(t->currentPage);
+	*/
 }

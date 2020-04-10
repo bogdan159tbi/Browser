@@ -54,12 +54,15 @@ int main()
 		if(!strcmp("set_band",cmd))
 		{
 			bandwith = atoi(cmd2);
-			bandwith = WIDTH;
+			
 		}
 		else if(!strcmp("newtab",cmd))
 			currentTab = newtab(b);
-		else if(!strcmp("deltab",cmd))
-			printf("deltab\n");
+		else if(!strcmp("deltab",cmd))//sa eliberez memoria pt resurse pg web back forward si struc pagina si struc tab
+			{
+
+				deltab(b);
+			}
 		else if(!strcmp("change_tab",cmd))
 			currentTab = changeTab(b,atoi(cmd2));
 		else if(!strcmp("print_open_tabs",cmd))
@@ -95,28 +98,10 @@ int main()
 		else if(!strcmp("wait",cmd))
 		{
 			int seconds = atoi(cmd2);
-			printf("wait\n");
+			bandwith *= seconds;
+			wait(b,bandwith);
 		}
 	}
-	/*
-	TTab *tab = b->tab->info;
-	gotoURL(tab,"google.com");
-	addHistory(b,"google.com");
-	gotoURL(tab,"facebook.com");
-	addHistory(b,"facebook.com");
-	back(tab);
-	forward(tab);
-	back(tab);
-	forward(tab);
-	gotoURL(tab,"yahoo.com");
-	addHistory(b,"yahoo.com");
-	back(tab);
-	//list_dl(tab->currentPage->resources,tab->currentPage->nrRes);
-	//history(b);
-	TTab *t2 = newtab(b);
-	gotoURL(t2,"instagram.com");
-	download(b,0,tab);
-	showDownloads(b);
-	*/
+	
 	return 0;
 }

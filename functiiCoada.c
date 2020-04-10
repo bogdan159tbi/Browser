@@ -120,9 +120,10 @@ void IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEl)
 		else
 			break;
 	}
-	IntrQ(&aux,elem);
-	while(ExtrQ(q,elem,fEl))
+	IntrQ(&aux,ae);
+	while(ExtrQ(q,elem,fEl)){
 		IntrQ(&aux,elem);
+	}
 	free(elem);//pt ca fac memcpy la intrq
 	((AQ)(*q))->ic = ((AQ)(aux))->ic;
 	((AQ)(*q))->sc = ((AQ)(aux))->sc;
