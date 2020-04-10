@@ -25,12 +25,12 @@ int IntrQ(void **a,void *ae)
 	memcpy(aux->info,ae,((AQ)(*a))->dime);//ae sa fie alocat inainte sau fac ca la stiva sa aloc aux->info;
 	aux->urm = NULL;
 	if(!EMPTYQ(*a))
-	{
+	{	
 		((AQ)(*a))->sc->urm = aux;
 		((AQ)(*a))->sc = aux;
 	}
 	else
-	{
+	{	
 		((AQ)(*a))->ic = aux;
 		((AQ)(*a))->sc = aux;
 	}
@@ -78,6 +78,20 @@ void DistrQ(void **a,TFreeQ freeEl)
 	free(*a);
 	*a = NULL;
 }
+void DistrQN(void **a,TFreeQ freeEl,int nr)
+{	
+	int elim = 0;
+	if(*a == NULL)
+		return;
+	while(!EMPTYQ(*a) && elim < nr)
+	{ 
+	 void *elem = calloc(1,sizeof( ((AQ)(*a))->dime));
+	 ExtrQ(a,elem,freeEl);
+	 elim++;
+	 //free(elem);
+	}
+
+}
 
 void IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEl)
 {
@@ -118,11 +132,20 @@ void IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEl)
 void AfisQ(void *q,TFAfisQ afis,TFreeQ freeEl)
 {	
 	void *x;
+	void *aux = InitQ(((AQ)q)->dime);
 	while(!EMPTYQ(q))
 	{
 		x = calloc(1,((AQ)q)->dime);
 		ExtrQ(&q,x,freeEl);
+		IntrQ(&aux,x);
+	}
+	while(!EMPTYQ(aux))
+	{
+		x = calloc(1,((AQ)q)->dime);
+		ExtrQ(&aux,x,freeEl);
+		IntrQ(&q,x);
 		afis(x);
 	}
 	freeEl(x);
+	free(aux);
 }

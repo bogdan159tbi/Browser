@@ -26,6 +26,7 @@ void *InitQ(size_t d);
 int IntrQ(void **a,void *ae);
 int ExtrQ(void **a,void *ae,TFreeQ freeEl);
 void DistrQ(void **a,TFreeQ freeEl);
+void DistrQN(void **a,TFreeQ freeEl,int nr);//pt history sa elim stringurile in functie de nr entries
 void IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEL);
 void AfisQ(void *q,TFAfisQ afis,TFreeQ freeEl);
 

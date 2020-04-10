@@ -37,6 +37,7 @@ void addHistory(TBrowser *b,char *URL)
 {
 	if(b->history == NULL)
 		b->history = InitQ(MAX_URL);
+
 	IntrQ((void*)(&b->history),URL);
 }
 void afisUrlHistory(void *info){
@@ -104,4 +105,19 @@ void showDownloads(TBrowser *b)
 		AfisQ(b->downloads,afisResourceQ,freeResourceQ);
 
 	//afisez din TLista downloaded 
+}
+
+void freeHistoryElem(void *info)
+{
+	char *str = (char*)info;
+	free(str);
+}
+
+void delhistory(TBrowser *b,int nrEntries)
+{
+	if(nrEntries > 0)
+		DistrQN((void*)&b->history,freeHistoryElem,nrEntries);
+	else
+		DistrQ((void*)&b->history,freeHistoryElem);
+
 }

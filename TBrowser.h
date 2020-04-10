@@ -18,7 +18,7 @@ void deltab(TBrowser *b);//intotdeauna va ramane un tab gol deschis
 TTab* changeTab(TBrowser *b,int index);
 void printOpenedTabs(TBrowser *b);//afiseaza pagina din fiecare tab folosing functia din TTab.h printPage
 void history(TBrowser *b);//afiseaza elem AQ history care contine stringuri URL
-void delhistory(TBrowser *b);//distruge coada AQ history
+void delhistory(TBrowser *b,int nr);//distruge coada AQ history
 void showDownloads(TBrowser *b);//afiseaza prima oara elem de tip resource din AQ downloads si dupa din TLista downloaded
 void wait(TBrowser *b,int seconds);//modifca dim de descarcat din AQ downloads daca s a term o baga n TLista downloaded
 void addHistory(TBrowser *b,char *URL);
@@ -27,4 +27,5 @@ void delUrlHistory(void *info);
 void download(TBrowser *b,int index,TTab *t);
 void afisResourceQ(void *info);
 void freeResourceQ(void *info);
+void freeHistoryElem(void *info);
 #endif
