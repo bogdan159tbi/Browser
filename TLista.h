@@ -16,7 +16,7 @@ typedef struct celula
 
 TLista InitLista();
 int Inserare(TLista *l,void *ae);
-void DistrL(TLista *al,TFree felib);
-void afisareLista(TLista l,afiEl fafis);
+void DistrL(TLista *al,TFreeL felib);
+void afisareLista(TLista l,afiElL fafis);
 
 #endif

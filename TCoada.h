@@ -7,11 +7,12 @@
 
 typedef void (*TFreeQ)(void *info);
 typedef int (*TFCmp)(void *x,void *y);
+typedef void (*TFAfisQ)(void *info);
 typedef struct celQ
 {
 	struct celQ *urm;
 	void *info;
-}TCelQ,*ACelQ
+}TCelQ,*ACelQ;
 
 typedef struct coada
 {
@@ -19,12 +20,13 @@ typedef struct coada
 	ACelQ ic,sc;
 }TCoada,*AQ;
 
-#define EMPTYQ(a) ( ((AQ)(a))->ic == NULL && ((AQ)(a))->sc == NULL )
+int EMPTYQ(void *a);
 
 void *InitQ(size_t d);
-int IntrQ(void *a,void *ae);
-void ExtrQ(void *a,void *ae,TFreeQ freeEl);
+int IntrQ(void **a,void *ae);
+int ExtrQ(void **a,void *ae,TFreeQ freeEl);
 void DistrQ(void **a,TFreeQ freeEl);
-void IntrQSorted(void *q,void *ae);
+void IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEL);
+void AfisQ(void *q,TFAfisQ afis,TFreeQ freeEl);
 
 #endif

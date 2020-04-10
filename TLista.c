@@ -43,7 +43,7 @@ void DistrL(TLista *l,TFreeL f)
 	*l = NULL;
 }
 
-void afisareLista(TLista l,afiEl fafis)
+void afisareLista(TLista l,afiElL fafis)
 {
 	for(; l != NULL; l = l->urm)
 		fafis(l->info);

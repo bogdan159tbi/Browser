@@ -2,7 +2,7 @@
 
 void *InitQ(size_t d) // d e dim unui elem introdus in caoda
 {
-	AQ q = (AQ)calloc(1,sizeof(TCelQ));
+	AQ q = (AQ)calloc(1,sizeof(TCoada));
 	if(!q)
 		return NULL;
 	q->dime = d;
@@ -10,44 +10,51 @@ void *InitQ(size_t d) // d e dim unui elem introdus in caoda
 	return (void*)q;
 }
 
+int EMPTYQ(void *a)
+{
+	if(((AQ)(a))->ic == NULL && ((AQ)(a))->sc == NULL )
+		return 1;
+	return 0;
+}
 int IntrQ(void **a,void *ae)
 {
 	ACelQ aux = calloc(1,sizeof(TCelQ));
 	if(!aux)
 		return 0;
-	memcpy(aux->info,ae,(*a)->dime);//ae sa fie alocat inainte sau fac ca la stiva sa aloc aux->info;
+	aux->info = calloc(1,((AQ)(*a))->dime);
+	memcpy(aux->info,ae,((AQ)(*a))->dime);//ae sa fie alocat inainte sau fac ca la stiva sa aloc aux->info;
 	aux->urm = NULL;
 	if(!EMPTYQ(*a))
 	{
-		(*a)->sc->urm = aux;
-		(*a)->sc = aux;
+		((AQ)(*a))->sc->urm = aux;
+		((AQ)(*a))->sc = aux;
 	}
 	else
 	{
-		(*a)->ic = aux;
-		(*a)->sc = aux;
+		((AQ)(*a))->ic = aux;
+		((AQ)(*a))->sc = aux;
 	}
 	return 1;
 }
 
 int ExtrQ(void **a,void *ae,TFreeQ freeEl)
 {
-	if(!EMPTYQ)
+	if(!EMPTYQ(*a))
 	{
 		ACelQ aux = calloc(1,sizeof(TCelQ));
 		if(!aux)
 		return 0;
-		aux->info = calloc(1,(*a)->dime);
-	 	if((*a)->sc == (*a)->ic){
-			aux = (*a)->ic;
-			(*a)->ic = (*a)->sc = NULL;
+		aux->info = calloc(1,((AQ)(*a))->dime);
+	 	if(((AQ)(*a))->sc == ((AQ)(*a))->ic){
+			aux = ((AQ)(*a))->ic;
+			((AQ)(*a))->ic = ((AQ)(*a))->sc = NULL;
 	 	}
 		else
 		{
-			aux = (*a)->ic;
-			(*a)->ic = aux->urm;
+			aux = ((AQ)(*a))->ic;
+			((AQ)(*a))->ic = aux->urm;
 		}
-		memcpy(ae,aux->info,(*a)->dime);
+		memcpy(ae,aux->info,((AQ)(*a))->dime);
 		//elibereaza aux->info;
 		freeEl(aux->info);
 		free(aux);
@@ -60,7 +67,7 @@ int ExtrQ(void **a,void *ae,TFreeQ freeEl)
 
 void DistrQ(void **a,TFreeQ freeEl)
 {
-	AQ q = (AQ)(*a),aux;
+	ACelQ q = ((AQ)(*a))->ic,aux;
 	for(;q != NULL; )
 	{
 		aux = q;
@@ -72,16 +79,14 @@ void DistrQ(void **a,TFreeQ freeEl)
 	*a = NULL;
 }
 
-
-
-void IntrQSorted(void **q,void *ae,TFCmp cmp)
+void IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEl)
 {
 	if(EMPTYQ(*q))
 	{
 		IntrQ(q,ae);
 		return;
 	}
-	AQ aux = InitQ(((AQ)(*q))->dime);//nus daca sa pun void* la aux
+	void *aux = InitQ(((AQ)(*q))->dime);//nus daca sa pun void* la aux
 	if(!aux)
 		return;
 
@@ -93,19 +98,31 @@ void IntrQSorted(void **q,void *ae,TFCmp cmp)
 	}
 	while(!EMPTYQ(*q))
 	{
-		if(cmp((*q)->ic,ae) < 0 )
+		if(cmp(((AQ)(*q))->ic,ae) < 0 )
 		{
-			ExtrQ(q,el);
+			ExtrQ(q,elem,fEl);
 			IntrQ(&aux,elem);
 		}
 		else
 			break;
 	}
-	IntrQ(&aux,el);
-	while(ExtrQ(q,el))
-		IntrQ(&aux,el);
-	free(el);//pt ca fac memcpy la intrq
-	(*q)->ic = aux->ic;
-	(*q)->sc = aux->sc;
+	IntrQ(&aux,elem);
+	while(ExtrQ(q,elem,fEl))
+		IntrQ(&aux,elem);
+	free(elem);//pt ca fac memcpy la intrq
+	((AQ)(*q))->ic = ((AQ)(aux))->ic;
+	((AQ)(*q))->sc = ((AQ)(aux))->sc;
 	free(aux);
+}
+
+void AfisQ(void *q,TFAfisQ afis,TFreeQ freeEl)
+{	
+	void *x;
+	while(!EMPTYQ(q))
+	{
+		x = calloc(1,((AQ)q)->dime);
+		ExtrQ(&q,x,freeEl);
+		afis(x);
+	}
+	freeEl(x);
 }
