@@ -28,7 +28,7 @@ int PushS(void *st,void *ae)
 
 	aux->urm = ((ASt)(st))->vf;
 	((ASt)st)->vf = aux;
-
+//sa dau free la ae 
 	return 1;
 }
 
@@ -36,11 +36,11 @@ int PopS(void *s,void *ae,TFreeS f)
 {
 	if(EMPTYS(s))
 		return 0;
-	memcpy(ae,((ASt)(s))->vf->info,((ASt)(s))->dime);
+	memcpy(ae,((ASt)(s))->vf->info,((ASt)(s))->dime); 
 	ACelSt aux = ((ASt)(s))->vf;
 	((ASt)(s))->vf = aux->urm;
 	//elibereaza aux->info care este o pagina web
-	f(aux->info);
+	//f(aux->info);
 	free(aux);
 	return 1;
 }
@@ -48,7 +48,7 @@ int Top(void *st,void *ae)
 {
 	if(EMPTYS(st))
 		return 0;
-	memcpy(ae,((ASt)st)->vf,((ASt)st)->dime);
+	memcpy(ae,((ASt)st)->vf->info,((ASt)st)->dime);
 	return 1;
 }
 

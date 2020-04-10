@@ -26,7 +26,7 @@ void *InitS(size_t d);
 //functie pt inserare in stiva: 1 a reusit,0 = n a reusit
 int PushS(void *a,void *ae); // ae = adr elem de inserat 
 int Top(void *a,void *ae);//copiaza elem din varful stivei la adr ae
-int PopS(void **a,void *ae,TFreeS f); //sterge elem din varful stivei si pastreaza info la adr ae
+int PopS(void *a,void *ae,TFreeS f); //sterge elem din varful stivei si pastreaza info la adr ae
 void DistrS(void **a,TFreeS f);
 void AfisSt(void *a,afiElS afis,TFreeS f);//echiv cu afisarea unei liste
 void RastoarnaS(void *dest,void *src);
