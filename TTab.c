@@ -43,15 +43,16 @@ void gotoURL(TTab *tab,char *URL)
 	if(tab->currentPage == NULL)
 		tab->currentPage = aux;
 	else
-	{	
+	{	if(tab->back == NULL)
 		tab->back = InitS(sizeof(TPage));
+
 		PushS(tab->back,tab->currentPage);
 		tab->currentPage = aux;
 		if(tab->forward != NULL)
 		if(!EMPTYS(tab->forward)) 
-			DistrS(&tab->forward,freePage);
+			DistrS(tab->forward,freePage);
 		//adauga in istoricul global
-
+	
 	}
 
 }

@@ -67,9 +67,9 @@ void printOpenedTabs(TBrowser *b)
 	for(; p != NULL ;index++, p = p->urm){
 		TTab *tab = (TTab*)(p->info);
 		if(tab->currentPage == NULL)
-			printf("(%d : empty)\n",index);
+			printf("(%d: empty)\n",index);
 		else
-			printf("(%d : %s)\n",index,tab->currentPage->URL);
+			printf("(%d: %s)\n",index,tab->currentPage->URL);
 
 	}
 }
@@ -170,19 +170,19 @@ void wait(TBrowser *b,long bandwidth)
 void deltab(TBrowser *b)
 {
 	//nu verificam daca nu ramane niciun tab deschis dupa ce l sterg pe ultimul deschis ca sa pun **
-	TLista p = b->tab,aux;
-	for(;p->urm->urm != NULL; p = p->urm);
+	TLista p = b->tab,aux,prev = NULL;
+	for(;p->urm!= NULL;prev = p, p = p->urm);
 
-	aux = p->urm;
-	p->urm = NULL;
+	aux = p;
 	//eliberez tabul care este info celulei din lista
-	TTab *t = (TTab*)aux->info;
-	
+	TTab *t = (TTab*)(aux->info);
+
 	if(t->back)
-	DistrS((void*)&(t->back),freePage);
+	DistrS((void*)(t->back),freePage);
 	if(t->forward)
-	DistrS(&t->forward,freePage);//sa verific daca merg asta si distrS la back
+	DistrS((void*)t->forward,freePage);//sa verific daca merg asta si distrS la back
 	if(t->currentPage)
 	freePage(t->currentPage);
 	
+	prev->urm = NULL;
 }

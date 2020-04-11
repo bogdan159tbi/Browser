@@ -52,17 +52,20 @@ int Top(void *st,void *ae)
 	return 1;
 }
 
-void DistrS(void **st,TFreeS f)// st == (ASt)st adica distruge o lista
+void DistrS(void *st,TFreeS f)
 {
-	ACelSt p = ((ASt)(*st))->vf,aux;
-	void *elem = calloc(1,((ASt)(*st))->dime);
+	ACelSt p = ((ASt)(st))->vf,aux;
+	void *elem = calloc(1,((ASt)(st))->dime);
 	if(!elem)
 		return;
-	while(!EMPTYS(*st))
+	
+	while(!EMPTYS(st))
 		PopS(st,elem,f);
+	/*
 	f(elem);
 	free(*st);
-	*st = NULL;// e buna asta?
+	//*st = NULL;// e buna asta?
+	*/
 }
 
 void AfisSt(void *a,afiElS afis,TFreeS f)

@@ -33,10 +33,10 @@ int main()
 	TTab *currentTab = (TTab*)(b->tab->info);
 //citirea
 	while(fgets(request,MAX_REQUEST,stdin))
-	{	char cmd[20],cmd2[20];
+	{	char cmd[200],cmd2[200];
 		char *tok;		
 		int okcmd2 = 0;
-		
+	//printf("%s\n",request);
 		if(strstr(request," "))
 		{
 			tok = strtok(request," ");
@@ -50,7 +50,7 @@ int main()
 			tok = strtok(request,"\n");
 			strcpy(cmd,tok);
 		}
-		//printf("aici %s %s\n",cmd,cmd2);
+
 		if(!strcmp("set_band",cmd))
 		{
 			bandwith = atoi(cmd2);
@@ -60,17 +60,17 @@ int main()
 			currentTab = newtab(b);
 		else if(!strcmp("deltab",cmd))//sa eliberez memoria pt resurse pg web back forward si struc pagina si struc tab
 			{
-				TLista p = b->tab,aux;
+				TLista p = b->tab,aux,prev = NULL;
 				if(p == NULL)
 				{
 					return 1;
 				}
-				for(;p->urm->urm != NULL; p = p->urm);
-				aux = p->urm;
+				for(;p->urm != NULL;prev = p, p = p->urm);
+				aux = p;
 				TTab *t = (TTab*)aux->info;
 				if(t == currentTab)
-				currentTab = p;
-				
+				  currentTab = (TTab*)(prev->info);
+
 				deltab(b);
 			}
 		else if(!strcmp("change_tab",cmd))
@@ -79,7 +79,7 @@ int main()
 			printOpenedTabs(b);
 		else if(!strcmp("goto",cmd)) 
 		{
-			char *URL = malloc(30);
+			char *URL = malloc(50);
 			if(!URL)
 				return 1;
 			strcpy(URL,cmd2);

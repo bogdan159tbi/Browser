@@ -44,7 +44,7 @@ void list_dl(Resource *array,int nr)
 {   
     int i;
     for(i = 0 ;i < nr ;i++)
-        printf("[%d \"%s\" : %ld]\n",i,array[i].id,array[i].size);
+        printf("[%d - \"%s\" : %ld]\n",i,array[i].id,array[i].size);
 }
 
 void freeResource(Resource *r)
