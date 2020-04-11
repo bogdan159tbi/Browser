@@ -32,8 +32,7 @@ void freePage(void *info)
 	TPage *pg = (TPage*)info;
 	free(pg->URL);
 	int i;
-	for(int i = 0 ;i < pg->nrRes; i++)
-		freeResource(&pg->resources[i]);
+	freeResources(pg->resources,pg->nrRes);
 }
 //modifica pagina curenta a tabului curent
 void gotoURL(TTab *tab,char *URL)

@@ -14,6 +14,7 @@ int Inserare(TLista *l,void *ae)
 	TLista aux = calloc(1,sizeof(TCelula)),p = *l,pre = NULL;
 	if(!aux)
 		return 0;
+	//aux->info = calloc(1,sizeof(ae));
 	aux->info = ae;
 	aux->urm = NULL;
 

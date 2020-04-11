@@ -60,7 +60,17 @@ int main()
 			currentTab = newtab(b);
 		else if(!strcmp("deltab",cmd))//sa eliberez memoria pt resurse pg web back forward si struc pagina si struc tab
 			{
-
+				TLista p = b->tab,aux;
+				if(p == NULL)
+				{
+					return 1;
+				}
+				for(;p->urm->urm != NULL; p = p->urm);
+				aux = p->urm;
+				TTab *t = (TTab*)aux->info;
+				if(t == currentTab)
+				currentTab = p;
+				
 				deltab(b);
 			}
 		else if(!strcmp("change_tab",cmd))

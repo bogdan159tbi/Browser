@@ -147,6 +147,6 @@ void AfisQ(void *q,TFAfisQ afis,TFreeQ freeEl)
 		IntrQ(&q,x);
 		afis(x);
 	}
-	freeEl(x);
+	//freeEl(x);
 	free(aux);
 }

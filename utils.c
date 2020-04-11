@@ -54,6 +54,7 @@ void freeResource(Resource *r)
 
 void freeResources(Resource *array,int nr)
 {  int i;
-    for(i = 0 ;i < nr ;i++)
-        freeResource(&array[i]);
+    //for(i = 0 ;i < nr ;i++)
+    //    freeResource(array[i]);
+    free(array);// inca nu stiu daca trebuie asa
 }

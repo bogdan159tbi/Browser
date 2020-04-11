@@ -47,7 +47,8 @@ void afisUrlHistory(void *info){
 }
 void delUrlHistory(void *info)
 {
-	free(info);
+	char *str = (char*)info;
+	free(str);
 }
 void history(TBrowser *b)
 {
@@ -75,7 +76,9 @@ void printOpenedTabs(TBrowser *b)
 void afisResourceQ(void *info)
 {
 	Resource *r = (Resource*)info;
-	printf("%s %lu/%lu\n",r->id,r->size - r->downloaded_size,r->size);
+	if(!r)
+		return;
+	printf("%s %lu/%lu\n",r->id,r->downloaded_size,r->size);//r->downloaded  size sau r->size - r->downloaded size
 }
 void freeResourceQ(void *info)
 {
@@ -117,6 +120,9 @@ void showDownloads(TBrowser *b)
 		AfisQ(b->downloads,afisResourceQ,freeResourceQ);
 
 	//afisez din TLista downloaded 
+	if(b->downloaded)
+	  afisareLista(b->downloaded,afisResourceQ);
+
 }
 
 void freeHistoryElem(void *info)
@@ -137,16 +143,17 @@ void delhistory(TBrowser *b,int nrEntries)
 void wait(TBrowser *b,long bandwidth)
 {
 	AQ coada = b->downloads;
-	Resource *aux = calloc(1,sizeof(Resource));
-	if(!aux)
-		return;
+	
 
 	while(!EMPTYQ(coada) && bandwidth)
 	{
+		Resource *aux = calloc(1,sizeof(Resource));
+		if(!aux)
+		return;
 		ExtrQ((void*)&coada,aux,freeResourceQ);
 		if(aux->size > bandwidth && aux->downloaded_size + bandwidth <= aux->size) // adaug in lista de downloadaate daca size < bandwidth si scad size din bandwidth
 		{
-		 aux->downloaded_size += bandwidth;
+		 aux->downloaded_size = aux->size - bandwidth;
 		 bandwidth = 0;
 		 IntrQSorted((void*)&coada,aux,cmpResources,freeResourceQ);
 		}
@@ -154,13 +161,11 @@ void wait(TBrowser *b,long bandwidth)
 		{	
 			bandwidth  = bandwidth - aux->downloaded_size - aux->size;
 			aux->downloaded_size = aux->size;
-			if(b->downloaded == NULL)
-				b->downloaded = InitLista();
-			Inserare(&b->downloaded,aux);
+			Inserare(&b->downloaded,aux);	
 		}
 	}	
-
-}
+//trebuie sa dau free la aux?
+}	
 
 void deltab(TBrowser *b)
 {
@@ -172,9 +177,12 @@ void deltab(TBrowser *b)
 	p->urm = NULL;
 	//eliberez tabul care este info celulei din lista
 	TTab *t = (TTab*)aux->info;
-	/*
-	DistrS(t->back,freePage);
-	DistrS(t->forward,freePage);
+	
+	if(t->back)
+	DistrS((void*)&(t->back),freePage);
+	if(t->forward)
+	DistrS(&t->forward,freePage);//sa verific daca merg asta si distrS la back
+	if(t->currentPage)
 	freePage(t->currentPage);
-	*/
+	
 }
