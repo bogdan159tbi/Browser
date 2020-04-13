@@ -40,7 +40,7 @@ void DistrL(TLista *l,TFreeL f)
 		free(aux);
 	}
 
-	free(*l);
+	//free(*l);
 	*l = NULL;
 }
 

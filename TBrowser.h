@@ -29,4 +29,6 @@ void freeResourceQ(void *info);
 void freeHistoryElem(void *info);
 int cmpResources(void *x,void *y);
 void wait(TBrowser *b,long bandwith);//modifca dim de descarcat din AQ downloads daca s a term o baga n TLista downloaded
+void afisResourceQDownloaded(void *info);
+void delBrowser(TBrowser *b);
 #endif

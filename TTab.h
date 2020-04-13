@@ -26,4 +26,6 @@ void forward(TTab *tab);// scoate din forward si o init ca pg curenta si pe cea 
 void gotoURL(TTab *tab,char *URL); // modifica pagina curenta 
 void printPage(TTab *t);//afiseaza url paginii din tab;
 void freePage(void *info);
+void delTab(void *t);
+void elibereazaPagina(void *info);
 #endif

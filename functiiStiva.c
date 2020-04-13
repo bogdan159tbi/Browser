@@ -29,6 +29,7 @@ int PushS(void *st,void *ae)
 	aux->urm = ((ASt)(st))->vf;
 	((ASt)st)->vf = aux;
 //sa dau free la ae 
+	free(ae);
 	return 1;
 }
 

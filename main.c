@@ -33,7 +33,7 @@ int main()
 	TTab *currentTab = (TTab*)(b->tab->info);
 //citirea
 	while(fgets(request,MAX_REQUEST,stdin))
-	{	char cmd[200],cmd2[200];
+	{	char cmd[200],cmd2[200] = "";
 		char *tok;		
 		int okcmd2 = 0;
 	//printf("%s\n",request);
@@ -42,6 +42,8 @@ int main()
 			tok = strtok(request," ");
 			strcpy(cmd,tok);
 			tok = strtok(NULL,"\n");
+			if(!tok)
+				return 1;
 			strcpy(cmd2,tok);
 			okcmd2 = 1;
 		}
@@ -85,6 +87,7 @@ int main()
 			strcpy(URL,cmd2);
 			gotoURL(currentTab,URL);
 			addHistory(b,URL);
+			wait(b,WIDTH);
 		}
 		else if(!strcmp("back",cmd)) 
 			back(currentTab);
@@ -96,8 +99,10 @@ int main()
 			int nr = atoi(cmd2);
 			delhistory(b,nr);
 		}
-		else if(!strcmp("list_dl",cmd)) 
+		else if(!strcmp("list_dl",cmd)) {
+			if(currentTab->currentPage)
 			list_dl(currentTab->currentPage->resources,currentTab->currentPage->nrRes);
+		}
 		else if(!strcmp("downloads",cmd))
 			showDownloads(b);
 		else if(!strcmp("download",cmd))
@@ -112,6 +117,7 @@ int main()
 			wait(b,bandwith);
 		}
 	}
-	
+	delBrowser(b);
+
 	return 0;
 }

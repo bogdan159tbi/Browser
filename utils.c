@@ -43,8 +43,11 @@ Resource* get_page_resources(const char *URL_Name, int *n){
 void list_dl(Resource *array,int nr)
 {   
     int i;
+    if(!array)
+        return;
     for(i = 0 ;i < nr ;i++)
         printf("[%d - \"%s\" : %ld]\n",i,array[i].id,array[i].size);
+    
 }
 
 void freeResource(Resource *r)

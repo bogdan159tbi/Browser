@@ -1,5 +1,4 @@
 #include "TCoada.h"
-
 void *InitQ(size_t d) // d e dim unui elem introdus in caoda
 {
 	AQ q = (AQ)calloc(1,sizeof(TCoada));
@@ -54,8 +53,12 @@ int ExtrQ(void **a,void *ae,TFreeQ freeEl)
 			aux = ((AQ)(*a))->ic;
 			((AQ)(*a))->ic = aux->urm;
 		}
+		if(!aux->info)
+			return 0;
+		if(!ae)
+			return 0;
+
 		memcpy(ae,aux->info,((AQ)(*a))->dime);
-		//elibereaza aux->info;
 		freeEl(aux->info);
 		free(aux);
 		return 1;
@@ -67,6 +70,9 @@ int ExtrQ(void **a,void *ae,TFreeQ freeEl)
 
 void DistrQ(void **a,TFreeQ freeEl)
 {
+	if(*a == NULL)
+		return;
+
 	ACelQ q = ((AQ)(*a))->ic,aux;
 	for(;q != NULL; )
 	{
@@ -78,6 +84,7 @@ void DistrQ(void **a,TFreeQ freeEl)
 	free(*a);
 	*a = NULL;
 }
+
 void DistrQN(void **a,TFreeQ freeEl,int nr)
 {	
 	int elim = 0;
@@ -85,12 +92,13 @@ void DistrQN(void **a,TFreeQ freeEl,int nr)
 		return;
 	while(!EMPTYQ(*a) && elim < nr)
 	{ 
-	 void *elem = calloc(1,sizeof( ((AQ)(*a))->dime));
+	 void *elem = calloc(1,100);//sa schimb 100
+	 if(!elem)
+	 	return;
 	 ExtrQ(a,elem,freeEl);
 	 elim++;
 	 //free(elem);
 	}
-
 }
 
 void IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEl)
@@ -112,7 +120,7 @@ void IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEl)
 	}
 	while(!EMPTYQ(*q))
 	{
-		if(cmp(((AQ)(*q))->ic,ae) < 0 )
+		if(cmp(((AQ)(*q))->ic->info,ae) > 0 )
 		{
 			ExtrQ(q,elem,fEl);
 			IntrQ(&aux,elem);
@@ -121,7 +129,8 @@ void IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEl)
 			break;
 	}
 	IntrQ(&aux,ae);
-	while(ExtrQ(q,elem,fEl)){
+	while(!EMPTYQ(*q)){
+		ExtrQ(q,elem,fEl);
 		IntrQ(&aux,elem);
 	}
 	free(elem);//pt ca fac memcpy la intrq
@@ -139,14 +148,17 @@ void AfisQ(void *q,TFAfisQ afis,TFreeQ freeEl)
 		x = calloc(1,((AQ)q)->dime);
 		ExtrQ(&q,x,freeEl);
 		IntrQ(&aux,x);
+
 	}
 	while(!EMPTYQ(aux))
 	{
 		x = calloc(1,((AQ)q)->dime);
+		if(!x)
+			return;
 		ExtrQ(&aux,x,freeEl);
 		IntrQ(&q,x);
 		afis(x);
 	}
 	//freeEl(x);
-	free(aux);
+	//free(aux);//cand lasam cu free dadea seg fault la test30
 }

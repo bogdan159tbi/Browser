@@ -6,7 +6,7 @@ TPage *initPage(char *URL)
 	TPage *webpg = calloc(1,sizeof(TPage));
 	if(!webpg)
 		return NULL;
-	webpg->URL = calloc(strlen(URL),sizeof(char));
+	webpg->URL = calloc(30,sizeof(char));
 	if(!webpg->URL)
 	{
 		free(webpg);
@@ -30,6 +30,8 @@ TTab *initTab()
 void freePage(void *info)
 {
 	TPage *pg = (TPage*)info;
+	if(!pg)
+		return;
 	free(pg->URL);
 	int i;
 	freeResources(pg->resources,pg->nrRes);
@@ -48,11 +50,12 @@ void gotoURL(TTab *tab,char *URL)
 
 		PushS(tab->back,tab->currentPage);
 		tab->currentPage = aux;
+		
 		if(tab->forward != NULL)
 		if(!EMPTYS(tab->forward)) 
 			DistrS(tab->forward,freePage);
 		//adauga in istoricul global
-	
+		
 	}
 
 }
@@ -99,4 +102,32 @@ void forward(TTab *tab)
 		else
 			return;//conditie in caz ca forward nu are elem
 	}
+}
+
+void elibereazaPagina(void *info)
+{
+	TPage *pg = (TPage *)info;
+	if(!pg)
+		return;
+	free(pg->URL);
+	free(pg->resources);
+	free(pg);
+}
+void delTab(void *tab)
+{
+	TTab *t = (TTab*)tab;
+	if(t->currentPage ){
+		free(t->currentPage->URL);
+		free(t->currentPage->resources);
+		free(t->currentPage);
+	}
+	if((t)->back){
+		DistrS((t)->back,elibereazaPagina);
+		free(t->back);
+	}
+	if((t)->forward){
+		DistrS((t)->forward,elibereazaPagina);
+		free(t->forward);
+	}
+	free(t);
 }
