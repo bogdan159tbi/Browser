@@ -36,6 +36,10 @@ void freePage(void *info)
 	int i;
 	freeResources(pg->resources,pg->nrRes);
 }
+void freeURL(void *inf)
+{
+	free((char*)inf);
+}
 //modifica pagina curenta a tabului curent
 void gotoURL(TTab *tab,char *URL)
 {
@@ -51,9 +55,21 @@ void gotoURL(TTab *tab,char *URL)
 		PushS(tab->back,tab->currentPage);
 		tab->currentPage = aux;
 		
-		if(tab->forward != NULL)
-		if(!EMPTYS(tab->forward)) 
-			DistrS(tab->forward,freePage);
+		if(tab->forward != NULL){
+			
+		while(!EMPTYS(tab->forward)){
+		void *elem = calloc(1,((ASt)(tab->forward))->dime);
+		PopS(tab->forward,elem,freeURL);
+		free(elem);
+		}
+		//free(tab->forward);
+
+		//if(!EMPTYS(tab->forward)) 
+		//	DistrS(tab->forward,freePage);
+
+			//free(((ASt)tab->forward)->vf);
+			//free(tab->forward);
+		}
 		//adauga in istoricul global
 		
 	}
@@ -113,6 +129,9 @@ void elibereazaPagina(void *info)
 	free(pg->resources);
 	free(pg);
 }
+
+
+
 void delTab(void *tab)
 {
 	TTab *t = (TTab*)tab;
@@ -122,12 +141,37 @@ void delTab(void *tab)
 		free(t->currentPage);
 	}
 	if((t)->back){
-		DistrS((t)->back,elibereazaPagina);
-		free(t->back);
+//	DistrS((t)->back,elibereazaPagina);
+
+	ACelSt p = ((ASt)(t->back))->vf,aux;
+	void *elem = calloc(1,((ASt)(t->back))->dime);
+	if(!elem)
+		return;
+	while(!EMPTYS(t->back)){
+		PopS(t->back,elem,freePage);
+		freePage(elem);
+	}
+	free(elem);
+	
+	free(((ASt)t->back)->vf);
+	free(t->back);
 	}
 	if((t)->forward){
-		DistrS((t)->forward,elibereazaPagina);
-		free(t->forward);
+	//DistrS((t)->forward,elibereazaPagina);
+
+	ACelSt p = ((ASt)(t->forward))->vf,aux;
+	void *elem = calloc(1,((ASt)(t->forward))->dime);
+	if(!elem)
+		return;
+	while(!EMPTYS(t->forward)){
+		PopS(t->forward,elem,freePage);
+		freePage(elem);
 	}
+	free(elem);
+	free(((ASt)t->forward)->vf);
+
+	free(t->forward);
+	}
+
 	free(t);
 }

@@ -42,43 +42,43 @@ void addHistory(TBrowser *b,char *URL)
 	IntrQ((void*)(&b->history),URL);
 	free(URL);// DACA NU DA BINE CEVA COMENTEAZA FREE UL ASTA CA L AM PUS DUPA CE AM INCEPUT ELIBERAREA MEMORIEI
 }
-void afisUrlHistory(void *info){
-	printf("%s\n",(char*)info);
+void afisUrlHistory(void *info,FILE *out){
+	fprintf(out,"%s\n",(char*)info);
 }
 void delUrlHistory(void *info)
 {
 	char *str = (char*)info;
 	free(str);
 }
-void history(TBrowser *b)
+void history(TBrowser *b,FILE *out)
 {
 	if(b->history)
 	{
-		AfisQ(b->history,afisUrlHistory,delUrlHistory);
+		AfisQ(b->history,afisUrlHistory,delUrlHistory,out);
 	}
-	else
-		printf("istoric global gol\n");
+	//else
+	//	printf("istoric global gol\n");
 }
 
-void printOpenedTabs(TBrowser *b)
+void printOpenedTabs(TBrowser *b,FILE *out)
 {
 	TLista p = b->tab;
 	int index = 0;
 	for(; p != NULL ;index++, p = p->urm){
 		TTab *tab = (TTab*)(p->info);
 		if(tab->currentPage == NULL)
-			printf("(%d: empty)\n",index);
+			fprintf(out,"(%d: empty)\n",index);
 		else
-			printf("(%d: %s)\n",index,tab->currentPage->URL);
+			fprintf(out,"(%d: %s)\n",index,tab->currentPage->URL);
 
 	}
 }
-void afisResourceQ(void *info)
+void afisResourceQ(void *info,FILE *out)
 {
 	Resource *r = (Resource*)info;
 	if(!r)
 		return;
-	printf("%s %lu/%lu\n",r->id,r->size - r->downloaded_size,r->size);//r->downloaded  size sau r->size - r->downloaded size
+	fprintf(out,"[\"%s\" : %lu/%lu]\n",r->id,r->size - r->downloaded_size,r->size);//r->downloaded  size sau r->size - r->downloaded size
 }
 void freeResourceQ(void *info)
 {
@@ -100,6 +100,8 @@ int cmpResources(void *x,void *y)
 	*/
 	// resursele care vor fi descărcate vor fi administrate folosind o coadă de priorități, prioritatea fiind dată de dimensiunea rămasă de descărcat
 	if(r1->size - r1->downloaded_size >  r2->size - r2->downloaded_size)
+		return -1;
+	else if( r1->size - r1->downloaded_size == r2->size - r2->downloaded_size)
 		return -1;
 	return 1;
 }
@@ -127,23 +129,23 @@ void download(TBrowser *b,int index,TTab *t)
 	IntrQSorted((void*)&(b->downloads),r,cmpResources,freeResourceQ); //IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEl)
 }	
 
-void afisResourceQDownloaded(void *info)
+void afisResourceQDownloaded(void *info,FILE *out)
 {
 	Resource *r = (Resource*)info;
 	if(!r)
 		return;
-	printf("[\"%s\" : completed]\n",r->id);//r->downloaded  size sau r->size - r->downloaded size
+	fprintf(out,"[\"%s\" : completed]\n",r->id);//r->downloaded  size sau r->size - r->downloaded size
 }
 
-void showDownloads(TBrowser *b)
+void showDownloads(TBrowser *b,FILE *out)
 {
 	//afisez din AQ downloads care are elem de tip resursa 
 	if(b->downloads != NULL)
-		AfisQ(b->downloads,afisResourceQ,freeResourceQ);
+		AfisQ(b->downloads,afisResourceQ,freeResourceQ,out);
 
 	//afisez din TLista downloaded 
 	if(b->downloaded)
-	  afisareLista(b->downloaded,afisResourceQDownloaded);
+	  afisareLista(b->downloaded,afisResourceQDownloaded,out);
 
 }
 
@@ -174,6 +176,7 @@ void wait(TBrowser *b,long bandwidth)
 	while(!EMPTYQ(coada) && bandwidth)
 	{
 		Resource *aux = calloc(1,sizeof(Resource));
+
 		if(!aux)
 		return;
 		ExtrQ((void*)&coada,aux,freeResourceQ);
@@ -187,6 +190,7 @@ void wait(TBrowser *b,long bandwidth)
 		{	
 			bandwidth  = bandwidth  + aux->downloaded_size - aux->size; // scad din bandw dtoata lungimea si adaug cat era inainte
 			aux->downloaded_size = aux->size;
+
 			Inserare(&b->downloaded,aux);	
 		}
 	}	
@@ -213,7 +217,7 @@ void deltab(TBrowser *b)
 	free(t->currentPage);
 	}
 	
-	
+	free(aux);
 	prev->urm = NULL;
 }
 
@@ -222,13 +226,30 @@ void delBrowser(TBrowser *b)
 {
 	if(!(b))
 		return;
+	TLista p,aux;
 	if((b)->downloaded)
-	DistrL(&(b)->downloaded,freeResourceQ);
-	DistrL(&b->tab,delTab);
-	
-	if(b->history)
+	{//DistrL(&b->downloaded,freeResourceQ);
+	 for(p = b->downloaded; p != NULL; p = p->urm)
+	 {
+	 	aux = p;
+	 	freeResourceQ(aux->info);
+	 }
+	free(b->downloaded);	
+	}
+
+	//DistrL(&b->tab,delTab);
+	 for(p = b->tab; p != NULL; p = p->urm)
+	 {
+	 	aux = p;
+	 	delTab(aux->info);
+	 }
+
+	free(b->tab);
+
+	if(b->history){
 	DistrQ((void*)&(b)->history,freeHistoryElem);
 	
+	}
 	if((b)->downloads)
 	DistrQ((void*)&(b)->downloads,freeResourceQ);
 	

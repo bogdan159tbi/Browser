@@ -28,4 +28,5 @@ void printPage(TTab *t);//afiseaza url paginii din tab;
 void freePage(void *info);
 void delTab(void *t);
 void elibereazaPagina(void *info);
+void freeURL(void *inf);
 #endif

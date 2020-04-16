@@ -18,6 +18,6 @@ typedef struct{
 Resource* get_page_resources(const char *URL_Name, int *n);
 void freeResource(Resource *r);
 void afisResource(Resource *r);
-void list_dl(Resource *r,int nr);//vector de resurse din pagina curenta a unui tab curent de ex
+void list_dl(Resource *r,int nr,FILE *out);//vector de resurse din pagina curenta a unui tab curent de ex
 void freeResources(Resource *array,int nr); // elibereaza vector de resurse
 #endif /* _DOWNLOAD_RESOURCE_ */

@@ -2,9 +2,10 @@
 
 //returns a dynamically allocated vector of Resources
 Resource* get_page_resources(const char *URL_Name, int *n){
-    int i, j, url_name_len = strlen(URL_Name);
+  int i, j, name_len, url_name_len = strlen(URL_Name);
+
     unsigned int resource_nr = 0;
-    unsigned long size = 0;
+    u_int32_t size = 0;
     if(URL_Name == NULL){
         return NULL;
     }
@@ -17,13 +18,13 @@ Resource* get_page_resources(const char *URL_Name, int *n){
     Resource *result = (Resource *)calloc(resource_nr, sizeof(Resource));
     *n = resource_nr;
     for(i = 0; i < resource_nr; i++){
-
         sprintf(result[i].id, "%s-(%d)", URL_Name, i);
         size = 0;
-        for(j = 0; j < strlen(result[i].id); j++){
+    name_len = strlen(result[i].id);
+
+        for(j = 0; j < name_len; j++){
             size += result[i].id[j];
         }
-
         /* Some randomness */
         size ^= size << 3;
         size += size >> 5;
@@ -40,13 +41,13 @@ Resource* get_page_resources(const char *URL_Name, int *n){
     return result;
 }
 
-void list_dl(Resource *array,int nr)
+void list_dl(Resource *array,int nr,FILE *out)
 {   
     int i;
     if(!array)
         return;
     for(i = 0 ;i < nr ;i++)
-        printf("[%d - \"%s\" : %ld]\n",i,array[i].id,array[i].size);
+        fprintf(out,"[%d - \"%s\" : %ld]\n",i,array[i].id,array[i].size);
     
 }
 

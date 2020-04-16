@@ -6,7 +6,7 @@
 #define LISTA
 
 typedef void (*TFreeL)(void *info);
-typedef void (*afiElL)(void *info);
+typedef void (*afiElL)(void *info,FILE *out);
 
 typedef struct celula
 {
@@ -17,6 +17,6 @@ typedef struct celula
 TLista InitLista();
 int Inserare(TLista *l,void *ae);
 void DistrL(TLista *al,TFreeL felib);
-void afisareLista(TLista l,afiElL fafis);
+void afisareLista(TLista l,afiElL fafis,FILE *out);
 
 #endif

@@ -20,4 +20,4 @@ run:
 clean:
 	rm -f *.o main
 checkMem:
-	valgrind --leak-check=yes --track-origins=yes ./main
+	valgrind --leak-check=full --error-exitcode=1  --track-origins=yes ./main

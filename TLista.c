@@ -40,12 +40,12 @@ void DistrL(TLista *l,TFreeL f)
 		free(aux);
 	}
 
-	//free(*l);
+	//free(*l); am pus comentarii dupa ce am inceput sa fac eliberarea de memorie
 	*l = NULL;
 }
 
-void afisareLista(TLista l,afiElL fafis)
+void afisareLista(TLista l,afiElL fafis,FILE *out)
 {
 	for(; l != NULL; l = l->urm)
-		fafis(l->info);
+		fafis(l->info,out);
 }

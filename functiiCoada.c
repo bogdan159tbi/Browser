@@ -81,6 +81,10 @@ void DistrQ(void **a,TFreeQ freeEl)
 		freeEl(aux->info);
 		free(aux);
 	}	
+	/*
+	free(((AQ)(*a))->ic);
+	free(((AQ)(*a))->sc);
+	*/
 	free(*a);
 	*a = NULL;
 }
@@ -139,7 +143,7 @@ void IntrQSorted(void **q,void *ae,TFCmp cmp,TFreeQ fEl)
 	free(aux);
 }
 
-void AfisQ(void *q,TFAfisQ afis,TFreeQ freeEl)
+void AfisQ(void *q,TFAfisQ afis,TFreeQ freeEl,FILE *out)
 {	
 	void *x;
 	void *aux = InitQ(((AQ)q)->dime);
@@ -157,8 +161,9 @@ void AfisQ(void *q,TFAfisQ afis,TFreeQ freeEl)
 			return;
 		ExtrQ(&aux,x,freeEl);
 		IntrQ(&q,x);
-		afis(x);
+		afis(x,out);
 	}
-	//freeEl(x);
-	//free(aux);//cand lasam cu free dadea seg fault la test30
+	DistrQ(&aux,freeEl);
+	//freeEl(x);// da seg fault la testu; 30 daca dau elim x probab ca se introduce x in elem din coaada din al doilea while
+	
 }

@@ -14,7 +14,7 @@ void *InitS(size_t d)
 		return NULL;
 	st->dime = d;
 	st->vf = calloc(1,sizeof(TCelSt));
-	st->vf = NULL;
+	st->vf = NULL;//e nevoie de asta?
 	return (void*)st;
 }
 
